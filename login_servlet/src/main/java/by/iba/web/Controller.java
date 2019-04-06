@@ -28,8 +28,9 @@ public class Controller extends HttpServlet {
   }
 
   private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    ActionFactory client = new ActionFactory();
-    ActionCommand command = client.defineCommand(request);
+
+    ActionFactory actionFactory = new ActionFactory();
+    ActionCommand command = actionFactory.defineCommand(request);
     String page = command.execute(request);
     if (page == null) {
       page = PropertiesManager.getProperty("path.page.index");

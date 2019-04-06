@@ -40,7 +40,7 @@ public class AddPersonCommand implements ActionCommand {
       request
           .getSession()
           .setAttribute("addUserError", PropertiesManager.getProperty("message.add.error.user"));
-      return PropertiesManager.getProperty("path.page.app.error");
+      return PropertiesManager.getProperty("path.page.error");
     }
 
     request

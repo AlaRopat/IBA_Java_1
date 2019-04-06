@@ -1,7 +1,9 @@
 package by.iba.web.dao;
 
+import by.iba.web.entity.Role;
 import by.iba.web.entity.User;
 import by.iba.web.exception.PersistException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,17 +13,13 @@ import java.util.List;
 
 public class UserDao extends AbstractJDBCDao<User, Integer> {
 
-  private static final String SELECT_QUERY = "SELECT id, login, passw FROM users";
-  private static final String INSERT_QUERY =
-      "INSERT INTO users (login,passw) VALUES(?,?);";
+  private static final String SELECT_QUERY = "SELECT id, login, passw, role FROM users";
+  private static final String INSERT_QUERY = "INSERT INTO users (login,passw,role) VALUES(?,?,?);";
   private static final String UPDATE_QUERY =
-      "UPDATE users SET login= ?, passw = ? WHERE id= ?;";
+      "UPDATE users SET login= ?, passw = ?, role = ?  WHERE id= ?;";
   private static final String DELETE_QUERY = "DELETE FROM users WHERE id= ?;";
-  private static final String USER_BY_LOGIN_PASSWORD_QUERY =
-      "SELECT login, passw from users where login=? and passw=?;";
-
-
-
+  private static final String USER_BY_LOGIN_QUERY =
+      "SELECT login, passw, role from users where login=?;";
 
   private class PersistUser extends User {
 
@@ -63,6 +61,7 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
         user.setId(resultSet.getInt("id"));
         user.setPassword(resultSet.getString("passw"));
         user.setLogin(resultSet.getString("login"));
+        user.setRole(Role.getFromString(resultSet.getString("role")));
         result.add(user);
       }
     } catch (Exception e) {
@@ -76,7 +75,8 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
       throws PersistException {
     try {
       preparedStatement.setString(1, object.getLogin());
-      preparedStatement.setString(2, object.getPassword());
+      preparedStatement.setString(2, BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+      preparedStatement.setString(3, object.getRole().getRoleName());
 
     } catch (Exception e) {
       throw new PersistException(e);
@@ -88,8 +88,9 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
       throws PersistException {
     try {
       preparedStatement.setString(1, object.getLogin());
-      preparedStatement.setString(2, object.getPassword());
-      preparedStatement.setInt(3, object.getId());
+      preparedStatement.setString(2, BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+      preparedStatement.setString(3, object.getRole().getRoleName());
+      preparedStatement.setInt(4, object.getId());
     } catch (Exception e) {
       throw new PersistException(e);
     }
@@ -97,14 +98,14 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
 
   public boolean isValidUser(final String login, final String password) {
 
-    PreparedStatement ps = null;
     try {
-
-      ps = connection.prepareStatement(USER_BY_LOGIN_PASSWORD_QUERY);
+      PreparedStatement ps = connection.prepareStatement(USER_BY_LOGIN_QUERY);
       ps.setString(1, login);
-      ps.setString(2, password);
-      ResultSet rs = ps.executeQuery();
-      return rs.first();
+      ResultSet resultSet = ps.executeQuery();
+
+      if (resultSet.next()) {
+        return BCrypt.checkpw(password, resultSet.getString("passw"));
+      }
 
     } catch (SQLException e) {
       e.printStackTrace();
@@ -112,4 +113,6 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
 
     return false;
   }
+
+
 }

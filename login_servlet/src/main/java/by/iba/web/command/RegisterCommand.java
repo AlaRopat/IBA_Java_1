@@ -1,6 +1,7 @@
 package by.iba.web.command;
 
 import by.iba.web.dao.UserDao;
+import by.iba.web.entity.Role;
 import by.iba.web.entity.User;
 import by.iba.web.exception.PersistException;
 import by.iba.web.property.PropertiesManager;
@@ -15,11 +16,13 @@ public class RegisterCommand implements ActionCommand {
 
   private static final String LOGIN = "login";
   private static final String PASSWORD = "password";
+  private static final String ROLE = "role";
 
   @Override
   public String execute(HttpServletRequest request) {
     String login = request.getParameter(LOGIN);
     String password = request.getParameter(PASSWORD);
+    String role = request.getParameter(ROLE);
 
     if (LoginService.checkLogin(login, password)) {
 
@@ -30,7 +33,10 @@ public class RegisterCommand implements ActionCommand {
     }
 
     UserDao userDao = new UserDao();
-    User newUser = User.builder().login(login).password(password).build();
+    User newUser = User.builder()
+                    .login(login)
+                    .password(password)
+                    .role(Role.getFromString(role)).build();
 
     try {
       userDao.save(newUser);
@@ -40,7 +46,7 @@ public class RegisterCommand implements ActionCommand {
       request
           .getSession()
           .setAttribute("addUserError", PropertiesManager.getProperty("message.add.error.user"));
-      return PropertiesManager.getProperty("path.page.app.error");
+      return PropertiesManager.getProperty("path.page.error");
     }
 
     request

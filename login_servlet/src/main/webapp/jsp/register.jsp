@@ -17,7 +17,8 @@
                    placeholder="Username"/>
             <input id="password" type="text" name="password" value="" required max="${pass.length}"
                    placeholder="Password"/>
-            <input id="register_button" type="submit" value="Submit"/>
+            <input id="role" type="text" name="role" value="" required  placeholder="Role"/>
+            <input id="register_button" type="submit" value="Sign Up"/>
         </form>
         <br/>
         <p style="color:red"> ${addUserError}</p>

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ActionFactory {
 
   public ActionCommand defineCommand(HttpServletRequest request) {
+
     ActionCommand current = new EmptyCommand();
     String action = request.getRequestURI();
     if (action == null || action.isEmpty()) {
