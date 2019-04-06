@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-//@WebFilter(urlPatterns = "/go_to_person.do")
+@WebFilter(urlPatterns = "/go_to_person.do")
 public class LoginRequiredFilter implements Filter {
   public void destroy() {}
 
