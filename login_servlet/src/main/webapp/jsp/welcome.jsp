@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<h1> Welcome, ${user}</h1>
+<h1> Welcome, ${user.login}</h1>
 
 
 <div id="formFooter">

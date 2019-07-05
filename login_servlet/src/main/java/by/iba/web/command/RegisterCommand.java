@@ -1,14 +1,15 @@
 package by.iba.web.command;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
 import by.iba.web.dao.UserDao;
 import by.iba.web.entity.Role;
 import by.iba.web.entity.User;
 import by.iba.web.exception.PersistException;
 import by.iba.web.property.PropertiesManager;
-import by.iba.web.service.LoginService;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
+import by.iba.web.service.UserService;
 
 public class RegisterCommand implements ActionCommand {
 
@@ -24,7 +25,7 @@ public class RegisterCommand implements ActionCommand {
     String password = request.getParameter(PASSWORD);
     String role = request.getParameter(ROLE);
 
-    if (LoginService.checkLogin(login, password)) {
+    if (UserService.checkLogin(login, password)) {
 
       request
           .getSession()

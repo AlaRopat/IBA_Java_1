@@ -1,11 +1,10 @@
 package by.iba.web.command;
 
-import by.iba.web.entity.ListService;
-import by.iba.web.property.PropertiesManager;
-import by.iba.web.service.LoginService;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import by.iba.web.dao.UserDao;
+import by.iba.web.property.PropertiesManager;
+import by.iba.web.service.UserService;
 
 public class LoginCommand implements ActionCommand {
 
@@ -18,8 +17,10 @@ public class LoginCommand implements ActionCommand {
     String login = request.getParameter(LOGIN);
     String pass = request.getParameter(PASSWORD);
 
-    if (LoginService.checkLogin(login, pass)) {
-      request.getSession().setAttribute(USER_ATTRIBUTE, login);
+    if (UserService.checkLogin(login, pass)) {
+      UserDao userDao = new UserDao();
+      request.getSession().setAttribute(USER_ATTRIBUTE, userDao.getUserByLogin(login));
+
       return PropertiesManager.getProperty("path.page.welcome");
     }
     request
