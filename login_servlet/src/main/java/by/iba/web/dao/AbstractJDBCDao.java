@@ -1,7 +1,5 @@
 package by.iba.web.dao;
 
-import by.iba.web.database.pool.JDBCConnectionPoolManager;
-import by.iba.web.exception.ConnectionPoolException;
 import by.iba.web.exception.PersistException;
 
 import java.sql.Connection;
@@ -21,12 +19,8 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Integ
 
   protected Connection connection;
 
-  public AbstractJDBCDao() {
-    try {
-      this.connection = JDBCConnectionPoolManager.getInstance().getConnectionPool().getConnection();
-    } catch (ConnectionPoolException e) {
-      e.printStackTrace();
-    }
+  public AbstractJDBCDao(Connection connection) {
+    this.connection = connection;
   }
 
   /** @return sql request for all records SELECT * FROM [Table] */

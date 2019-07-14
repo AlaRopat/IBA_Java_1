@@ -15,11 +15,18 @@ public class JDBCConnectionPoolManager {
 
   public static JDBCConnectionPoolManager getInstance() {
     if (instance == null) {
-      instance = new ThreadLocal<JDBCConnectionPoolManager>() {
-      }.get();
+      instance =
+          ThreadLocal.withInitial(() -> {
+            JDBCConnectionPoolManager connectionPoolManager = null;
+            try {
+              connectionPoolManager = new JDBCConnectionPoolManager();
+            } catch (ConnectionPoolException e) {
+              LOGGER.error(e.getMessage());
+            }
+            return connectionPoolManager;
+          }).get();
     }
     return instance;
-
   }
 
   public ConnectionPool getConnectionPool() {

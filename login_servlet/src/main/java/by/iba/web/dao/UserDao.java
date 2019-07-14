@@ -1,5 +1,6 @@
 package by.iba.web.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +14,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import by.iba.web.entity.Role;
 import by.iba.web.entity.User;
 import by.iba.web.exception.PersistException;
-import by.iba.web.exception.UserNotFoundException;
 
 public class UserDao extends AbstractJDBCDao<User, Integer> {
 
@@ -24,8 +24,7 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
   private static final String UPDATE_QUERY =
       "UPDATE users SET login= ?, passw = ?, role = ?  WHERE id= ?;";
   private static final String DELETE_QUERY = "DELETE FROM users WHERE id= ?;";
-  private static final String USER_BY_LOGIN_QUERY =
-      "SELECT login, passw, role from users where login=?;";
+  private static final String USER_BY_LOGIN_QUERY = "SELECT id, login, passw, role FROM users where login = ?";
 
   private class PersistUser extends User {
 
@@ -34,8 +33,8 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
     }
   }
 
-  public UserDao() {
-    super();
+  public UserDao(Connection connection) {
+    super(connection);
   }
 
   @Override
@@ -129,7 +128,7 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
     return Optional.ofNullable(user)
         .orElseThrow(
             () ->
-                new UserNotFoundException(String.format("User with login - %s not found", login)));
+                new RuntimeException(String.format("User with login - %s not found", login)));
   }
 
   private User parseUser(ResultSet resultSet) throws SQLException {

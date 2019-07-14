@@ -1,9 +1,8 @@
 package by.iba.web.command;
 
-import by.iba.web.dao.PersonDao;
-import by.iba.web.entity.ListService;
-import by.iba.web.exception.PersistException;
+import by.iba.web.exception.ServiceException;
 import by.iba.web.property.PropertiesManager;
+import by.iba.web.service.PersonService;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,17 +12,14 @@ public class ShowPersonsCommand implements ActionCommand {
 
   @Override
   public String execute(HttpServletRequest request) {
-    PersonDao personDao = new PersonDao();
-
+    PersonService personService = new PersonService();
     try {
-      request.getSession().setAttribute("personList", personDao.getAll());
-    } catch (PersistException e) {
+      request.getSession().setAttribute("personList", personService.getAllPersons());
+    } catch (ServiceException e) {
 
       LOGGER.error(e.getMessage());
-      request
-              .getSession()
-              .setAttribute("addUserError", PropertiesManager.getProperty("message.add.error.user"));
-      return PropertiesManager.getProperty("path.page.app.error");
+      request.getSession().setAttribute("showPersonsError", e.getMessage());
+      return PropertiesManager.getProperty("path.page.show.persons");
     }
     return PropertiesManager.getProperty("path.page.show.persons");
   }

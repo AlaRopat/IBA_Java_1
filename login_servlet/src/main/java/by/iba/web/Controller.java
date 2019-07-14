@@ -1,6 +1,7 @@
 package by.iba.web;
 
 import by.iba.web.command.ActionCommand;
+import by.iba.web.exception.ServiceException;
 import by.iba.web.factory.ActionFactory;
 import by.iba.web.property.PropertiesManager;
 
@@ -34,7 +35,14 @@ public class Controller extends HttpServlet {
 
     ActionFactory actionFactory = new ActionFactory();
     ActionCommand command = actionFactory.defineCommand(request);
-    String page = command.execute(request);
+    String page = null;
+    try {
+      page = command.execute(request);
+    } catch (ServiceException e) {
+      page = PropertiesManager.getProperty("path.page.error");
+      request.getSession().setAttribute("error_message", e.getMessage());
+      response.sendRedirect(request.getContextPath() + page);
+    }
     if (page == null) {
       page = PropertiesManager.getProperty("path.page.index");
       request

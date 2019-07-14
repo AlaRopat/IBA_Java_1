@@ -5,13 +5,14 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
 public class Person implements Identified<Integer> {
   private Integer id;
-  private String name;
-  private String email;
-  private String phone;
+  @NonNull private String name;
+  @NonNull private String email;
+  @NonNull private String phone;
 }

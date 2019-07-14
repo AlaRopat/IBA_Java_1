@@ -1,15 +1,13 @@
 package by.iba.web.command;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
-import by.iba.web.dao.UserDao;
 import by.iba.web.entity.Role;
 import by.iba.web.entity.User;
-import by.iba.web.exception.PersistException;
+import by.iba.web.exception.ServiceException;
 import by.iba.web.property.PropertiesManager;
 import by.iba.web.service.UserService;
+import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class RegisterCommand implements ActionCommand {
 
@@ -24,8 +22,9 @@ public class RegisterCommand implements ActionCommand {
     String login = request.getParameter(LOGIN);
     String password = request.getParameter(PASSWORD);
     String role = request.getParameter(ROLE);
+    UserService userService = new UserService();
 
-    if (UserService.checkLogin(login, password)) {
+    if (userService.checkLogin(login, password)) {
 
       request
           .getSession()
@@ -33,20 +32,17 @@ public class RegisterCommand implements ActionCommand {
       return PropertiesManager.getProperty("path.page.register");
     }
 
-    UserDao userDao = new UserDao();
-    User newUser = User.builder()
-                    .login(login)
-                    .password(password)
-                    .role(Role.getFromString(role)).build();
+    User newUser =
+        User.builder().login(login).password(password).role(Role.getFromString(role)).build();
 
     try {
-      userDao.save(newUser);
-    } catch (PersistException e) {
+      userService.saveUser(newUser);
+    } catch (ServiceException e) {
 
       LOGGER.error(e.getMessage());
       request
           .getSession()
-          .setAttribute("addUserError", PropertiesManager.getProperty("message.add.error.user"));
+          .setAttribute("error_message", PropertiesManager.getProperty("message.add.error.user"));
       return PropertiesManager.getProperty("path.page.error");
     }
 

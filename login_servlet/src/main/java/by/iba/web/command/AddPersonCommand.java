@@ -1,9 +1,9 @@
 package by.iba.web.command;
 
-import by.iba.web.dao.PersonDao;
 import by.iba.web.entity.Person;
-import by.iba.web.exception.PersistException;
+import by.iba.web.exception.ServiceException;
 import by.iba.web.property.PropertiesManager;
+import by.iba.web.service.PersonService;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +30,16 @@ public class AddPersonCommand implements ActionCommand {
       return PropertiesManager.getProperty("path.page.welcome");
     }
 
-    PersonDao personDao = new PersonDao();
+    PersonService personService = new PersonService();
     Person newPerson = Person.builder().name(name).phone(phone).email(email).build();
     try {
-      personDao.save(newPerson);
-    } catch (PersistException e) {
+      personService.savePerson(newPerson);
+    } catch (ServiceException e) {
 
       LOGGER.error(e.getMessage());
       request
           .getSession()
-          .setAttribute("addUserError", PropertiesManager.getProperty("message.add.error.user"));
+          .setAttribute("error_message", PropertiesManager.getProperty("message.add.error.user"));
       return PropertiesManager.getProperty("path.page.error");
     }
 

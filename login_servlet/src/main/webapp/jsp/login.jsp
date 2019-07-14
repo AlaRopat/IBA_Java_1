@@ -13,7 +13,7 @@
     <div id="formContent">
         <form name="LoginForm" method="POST" action="/authentication.do">
             <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-            <input type="text" id="password" class="fadeIn third" name="password" placeholder="password">
+            <input type="text" id="password" class="fadeIn second" name="password" placeholder="password">
             <input type="submit" class="fadeIn fourth" value="Log In">
             <br/>
             <p style="color:red">${errorLoginPassMessage}</p>

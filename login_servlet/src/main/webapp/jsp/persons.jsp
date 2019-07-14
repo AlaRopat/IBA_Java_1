@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" href="../css/style.css"/>
 </head>
 <body>
+${showPersonsError}
 <table border="1" cellpadding="5" width="600">
     <tr>
         <th>Name</th>

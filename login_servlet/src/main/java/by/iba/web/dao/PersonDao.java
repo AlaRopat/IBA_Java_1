@@ -1,12 +1,11 @@
 package by.iba.web.dao;
 
 import by.iba.web.entity.Person;
-import by.iba.web.entity.User;
 import by.iba.web.exception.PersistException;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,9 +18,6 @@ public class PersonDao extends AbstractJDBCDao<Person, Integer> {
       "UPDATE persons SET name = ?, phone = ?, email = ? WHERE id= ?;";
   private static final String DELETE_QUERY = "DELETE FROM persons WHERE id= ?;";
 
-
-
-
   private class PersistPerson extends Person {
 
     public void setId(int id) {
@@ -29,8 +25,8 @@ public class PersonDao extends AbstractJDBCDao<Person, Integer> {
     }
   }
 
-  public PersonDao() {
-    super();
+  public PersonDao(Connection connection) {
+    super(connection);
   }
 
   @Override
@@ -96,6 +92,4 @@ public class PersonDao extends AbstractJDBCDao<Person, Integer> {
       throw new PersistException(e);
     }
   }
-
-
 }
