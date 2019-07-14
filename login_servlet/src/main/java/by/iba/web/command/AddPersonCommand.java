@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class AddPersonCommand implements ActionCommand {
 
-  private static final Logger LOGGER = Logger.getLogger(RegisterCommand.class);
+  private static final Logger LOGGER = Logger.getLogger(AddPersonCommand.class);
 
   private static final String ADD_NAME = "add_name";
   private static final String ADD_PHONE = "add_phone";
@@ -39,7 +39,7 @@ public class AddPersonCommand implements ActionCommand {
       LOGGER.error(e.getMessage());
       request
           .getSession()
-          .setAttribute("error_message", PropertiesManager.getProperty("message.add.error.user"));
+          .setAttribute("error_message", e.getMessage());
       return PropertiesManager.getProperty("path.page.error");
     }
 
